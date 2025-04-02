@@ -28,9 +28,3 @@ Calculated using Mean Decrease in Impurity (MDI):
 7. Performance Metrics: Calculates MAPE (Mean Absolute Percentage Error) for model evaluation.
 8. Visualization: Generates plots comparing actual vs predicted stock prices.
 
-
-
-## Visualization Code Samples
-git add images/
-git commit -m "Add LSTM prediction graphs"
-git push origin main

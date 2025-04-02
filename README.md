@@ -1,3 +1,4 @@
+![LaTeX](https://img.shields.io/badge/LaTeX-Equations-blue?style=flat)
 # Time-series-analysys-using-LSTM
 This repository focuses on LSTM models and technical indicators like RSI, MACD, Bollinger Bands, and ROC. It includes data preprocessing, EDA, hyperparameter tuning, and stock price prediction to enhance investment strategies.
 
@@ -5,8 +6,23 @@ This repository focuses on LSTM models and technical indicators like RSI, MACD, 
 **Mean Absolute Percentage Error (MAPE):**
 $$
 \text{MAPE} = \frac{100\%}{n} \sum_{i=1}^n \left| \frac{y_i - \hat{y}_i}{y_i} \right|
+$$
+Where:
+- $y_i$ = Actual value
+- $\hat{y}_i$ = Predicted value
+- $n$ = Number of observations
 
 Feature Selection 
+**Random Forest Feature Importance:**  
+Calculated using Mean Decrease in Impurity (MDI):
+$$
+\text{Importance}_j = \frac{1}{N} \sum_{t=1}^N \Delta\text{Impurity}_t^{(j)}
+$$
+Where:
+- $j$ = Feature index
+- $N$ = Number of trees in the forest
+- $\Delta\text{Impurity}_t^{(j)}$ = Impurity reduction from splits using feature $j$ in tree $t$
+
 
 **Features**
 1. Data Collection: Downloads historical stock data for portfolio tickers using Yahoo Finance.

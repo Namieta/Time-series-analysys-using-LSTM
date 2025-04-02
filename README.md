@@ -4,24 +4,12 @@ This repository focuses on LSTM models and technical indicators like RSI, MACD, 
 
 ### Evaluation Metric
 **Mean Absolute Percentage Error (MAPE):**
-$$
-\text{MAPE} = \frac{100\%}{n} \sum_{i=1}^n \left| \frac{y_i - \hat{y}_i}{y_i} \right|
-$$
-Where:
-- $y_i$ = Actual value
-- $\hat{y}_i$ = Predicted value
-- $n$ = Number of observations
+![MAPE Formula](https://latex.codecogs.com/png.latex?%5Ctext%7BMAPE%7D%20%3D%20%5Cfrac%7B100%5C%25%7D%7Bn%7D%20%5Csum_%7Bi%3D1%7D%5En%20%5Cleft%7C%20%5Cfrac%7By_i%20-%20%5Chat%7By%7D_i%7D%7By_i%7D%20%5Cright%7C)
 
 Feature Selection 
 **Random Forest Feature Importance:**  
 Calculated using Mean Decrease in Impurity (MDI):
-$$
-\text{Importance}_j = \frac{1}{N} \sum_{t=1}^N \Delta\text{Impurity}_t^{(j)}
-$$
-Where:
-- $j$ = Feature index
-- $N$ = Number of trees in the forest
-- $\Delta\text{Impurity}_t^{(j)}$ = Impurity reduction from splits using feature $j$ in tree $t$
+![Feature Importance Formula](https://latex.codecogs.com/png.latex?%5Ctext%7BImportance%7D_j%20%3D%20%5Cfrac%7B1%7D%7BN%7D%20%5Csum_%7Bt%3D1%7D%5EN%20%5CDelta%5Ctext%7BImpurity%7D_t%5E%7B(j)%7D)
 
 
 **Features**

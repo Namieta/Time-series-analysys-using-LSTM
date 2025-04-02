@@ -31,16 +31,14 @@ from tensorflow import keras # type: ignore
 from tensorflow.keras.optimizers import Adam # type: ignore
 from tensorflow.keras.layers import CuDNNLSTM # type: ignore
 
-# Define the time period for historical data
+# Time period for historical data
 end_date = datetime(2025, 3, 13)
-start_date = end_date - timedelta(days=9131)  # 20 years of data
+start_date = end_date - timedelta(days=9131)  
 
-# Create directory for data verification
 data_dir = "stock_data_LSTM_Future_1"
 if not os.path.exists(data_dir):
     os.makedirs(data_dir)
 
-# Load portfolio data
 portfolio_df = pd.read_excel('holdings.xlsx', sheet_name='Equity', skiprows=22, header=0)
 
 print("DataFrame head:")
@@ -109,16 +107,12 @@ def calculate_bollinger_bands(data, window=20, num_std=2):
         raise ValueError("Number of standard deviations must be positive")
 
     # Calculate rolling metrics
-    rolling_mean = data.rolling(window=window, min_periods=1).mean()  # At least 1 period needed
-    rolling_std = data.rolling(window=window, min_periods=2).std(ddof=0)  # At least 2 periods for std
+    rolling_mean = data.rolling(window=window, min_periods=1).mean()  
+    rolling_std = data.rolling(window=window, min_periods=2).std(ddof=0)  
 
     # Calculate bands
     upper_band = rolling_mean + (rolling_std * num_std)
     lower_band = rolling_mean - (rolling_std * num_std)
-
-    # Forward-fill NaN values (optional)
-    # rolling_mean = rolling_mean.ffill()
-    # rolling_std = rolling_std.ffill()
     
     return upper_band, rolling_mean, lower_band    
 
@@ -133,11 +127,10 @@ def calculate_technical_indicators(df,
                                  bb_period=20,
                                  roc_period=12):
                             
-    # Ensure we have required columns
     if 'High' not in df or 'Low' not in df:
         raise ValueError("DataFrame must contain 'High' and 'Low' columns for full technical analysis")
 
-    # Existing indicators
+    # Indicators
     # RSI
     df['RSI'] = calculate_rsi(df['Close'], period=rsi_period)
     
@@ -150,11 +143,9 @@ def calculate_technical_indicators(df,
     df['BB_upper'], df['BB_middle'], df['BB_lower'] = calculate_bollinger_bands(df['Close'], 
                                                                                window=bb_period)
 
-    # New indicators
     # Rate of Change
     df['ROC'] = calculate_roc(df['Close'], period=roc_period)
     
-    # Drop NaN values from all calculations
     if df is not None:
         df = df.dropna()
     else:
@@ -166,7 +157,6 @@ for ticker in stock_price_data:
     df = stock_price_data[ticker]
     
     try:
-        # Calculate all technical indicators
         df = calculate_technical_indicators(df)
 
         features = [
@@ -175,14 +165,12 @@ for ticker in stock_price_data:
             'ROC'
         ]
 
-        # Ensure we have the required columns after calculations
         required_columns = features + ['High', 'Low']
         df = df[required_columns]
         
-        # Save and continue processing
-        # print(f"Saving CSV for {ticker} in {data_dir}")
         csv_filename = os.path.join(data_dir, f"{ticker}_data_with_indicators.csv")
         df.to_csv(csv_filename)
+        
         print(f"Saved data for {ticker} to {csv_filename}")
     except ValueError as ve:
         print(f"Error processing {ticker}: {str(ve)}")
@@ -190,58 +178,41 @@ for ticker in stock_price_data:
         continue
     except Exception as e:
         print(f"Unexpected error processing {ticker}: {str(e)}")
+        
         continue
 
 def perform_eda(stock_data_dict):
-# def perform_eda(stock_data_dict, output_dir="eda_results"):
-
     combined_df = pd.concat(stock_data_dict.values(), keys=stock_data_dict.keys(), names=['Ticker', 'Date'])
-    
-    # Summary statistics
+
     print('NamitaVilasSawant')
+    
     summary_stats = combined_df.groupby('Ticker')['Close'].describe()
     print(summary_stats)
     print(combined_df.groupby('Ticker')['Close'].describe())
 
     reshaped_summary_stats = summary_stats.reset_index()
-    # Save reshaped summary statistics to a file
     summary_stats_file = os.path.join(data_dir, "summary_statistics.csv")
     reshaped_summary_stats.to_csv(summary_stats_file, index=False)
     print(f"Summary statistics saved to {summary_stats_file}")
 
-     # Calculate returns for each ticker separately
     for ticker in combined_df.index.get_level_values('Ticker').unique():
-        combined_df.loc[ticker, 'Returns'] = combined_df.loc[ticker, 'Close'].pct_change(fill_method=None) ##fillmethodnoneadded
+        combined_df.loc[ticker, 'Returns'] = combined_df.loc[ticker, 'Close'].pct_change(fill_method=None)
 
     z_scores = stats.zscore(combined_df['Returns'].dropna())
     outliers = (abs(z_scores) > 3).sum()
     print(f"Number of outliers detected: {outliers}")
-
-    # for ticker in tickers:
-    #     print(f"\nPerforming EDA for {ticker}:")
         
 perform_eda(stock_price_data)
 
 
 def preprocess_data(df):
-    # Identify columns that should be numeric
     numeric_columns = ['Close', 'RSI', 'MACD', 'Signal', 'BB_upper', 'BB_middle', 'BB_lower', 'ROC', 'High', 'Low']
     
-    # Convert identified columns to numeric
     for col in numeric_columns:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce')
     
-    # Drop rows with NaN values
-    # df = df.dropna()
-    
-    # Handle missing values
-    # df_filled = df.fillna(df.mean())
-    
-    # Remove duplicate rows
-    # df_no_duplicates = df_filled.drop_duplicates()
-    
-    # Handle outliers using the IQR method
+    # IQR method
     def handle_outliers(df, columns):
         for column in columns:
             Q1 = df[column].quantile(0.25)
@@ -255,28 +226,13 @@ def preprocess_data(df):
                 df[column]
             )
 
-        df[column] = df[column].clip(lower=lower_bound, upper=upper_bound) ###newadd
+        df[column] = df[column].clip(lower=lower_bound, upper=upper_bound) 
 
         return df
-    
-    # df_outliers_cleaned = handle_outliers(df_no_duplicates, numeric_columns)
-    
-    # Remove rows with NaN values after outlier handling
-    # df_cleaned = df_outliers_cleaned.dropna()
-    
-    # return df_cleaned
 
-    return (df
-            .pipe(handle_outliers, numeric_columns)
-            .dropna(subset=numeric_columns)
-            .drop_duplicates()
-            .reset_index(drop=True)) ####newaddd
-
-def load_and_preprocess_data(csv_filename): ###Original
-    # Read the CSV file, skipping the first two rows
+def load_and_preprocess_data(csv_filename):
     df = pd.read_csv(csv_filename, skiprows=2, index_col=0, parse_dates=True)
     
-    # Check if the DataFrame has the expected number of columns
     if len(df.columns) != 10:  # We expect 4 columns excluding the index
         print(f"Unexpected number of columns in {csv_filename}")
         return None
@@ -284,21 +240,18 @@ def load_and_preprocess_data(csv_filename): ###Original
     df.columns = ['Close', 'RSI', 'MACD', 'Signal', 
             'BB_upper', 'BB_middle', 'BB_lower',
             'ROC', 'High', 'Low']
-    # df = df.dropna()
 
-    # return df
-    return preprocess_data(df) ###new add
+    return preprocess_data(df) 
 
 sequence_length = 180
 
-def prepare_sequences(data, sequence_length):  ####original
+def prepare_sequences(data, sequence_length):  
     X, y = [], []
     for i in range(len(data) - sequence_length):
         X.append(data[i:i+sequence_length])
-        y.append(data[i+sequence_length][0])  # Assuming 'Close' is the first column
+        y.append(data[i+sequence_length][0]) 
     return np.array(X), np.array(y)
 
-##hyper added below
 def create_lstm_model(input_file, look_back=126, train_split=0.7):
     # Load and preprocess the data
     df = load_and_preprocess_data(input_file)
@@ -337,7 +290,6 @@ def create_lstm_model(input_file, look_back=126, train_split=0.7):
         ))
         model.add(Dense(1))  
         
-        # Add learning rate hyperparameter properly
         learning_rate = hp.Float('lr', min_value=1e-4, max_value=1e-2, sampling='log')
         
         model.compile(
@@ -345,8 +297,7 @@ def create_lstm_model(input_file, look_back=126, train_split=0.7):
             loss='mse',
             metrics=['mae']  # validation metrics
         ) 
-
-        ###GPU
+        
         return model
     
     overwrite=True
@@ -365,9 +316,8 @@ def create_lstm_model(input_file, look_back=126, train_split=0.7):
         beta=2.6,
         executions_per_trial=3
     )
-
-
-    # Define early stopping callback
+    
+    # Early stopping callback
     early_stopping = EarlyStopping(
         monitor='val_loss',
         patience=10,
@@ -379,7 +329,6 @@ def create_lstm_model(input_file, look_back=126, train_split=0.7):
         epochs=100,  # Set max epochs here
         validation_data=(X_test, y_test),
         batch_size=64,
-        # callbacks=[EarlyStopping(patience=10)]
         callbacks=[early_stopping]
     )
 
@@ -397,22 +346,15 @@ for ticker in tickers:
             train_predict = best_model.predict(X_train)
             test_predict = best_model.predict(X_test)
             
-            # Ensure the number of features matches the scaler's feature count
-            train_predict_full = np.zeros((len(train_predict), len(features)))  # Use len(features) for consistency
-            train_predict_full[:, 0] = train_predict[:, 0]  # Assuming 'Close' is the first column
-
-            # Ensure consistent feature count matching the scaler's training
-            train_predict_full = np.zeros((len(train_predict), len(features)))  # Use len(features)
-            train_predict_full[:, 0] = train_predict[:, 0]  # Assuming 'Close' is the first column
+            train_predict_full = np.zeros((len(train_predict), len(features))) 
+            train_predict_full[:, 0] = train_predict[:, 0]  
 
             test_predict_full = np.zeros((len(test_predict), len(features)))
             test_predict_full[:, 0] = test_predict[:, 0]
 
-            # Perform inverse transformation
             train_original_scale = scaler.inverse_transform(train_predict_full)[:, 0]
             test_original_scale = scaler.inverse_transform(test_predict_full)[:, 0]
 
-            # Inverse transform for y_train and y_test
             y_train_full = np.zeros((len(y_train), len(features)))
             y_train_full[:, 0] = y_train.reshape(-1)
             y_train_inv = scaler.inverse_transform(y_train_full)[:, 0]
@@ -450,7 +392,7 @@ for ticker in tickers:
             
             print(f"Best hyperparameters: {best_hps.values}")
     else:
-        print(f"No processed data file found for {ticker}")######hyperpareticker
+        print(f"No processed data file found for {ticker}")
 
 
 

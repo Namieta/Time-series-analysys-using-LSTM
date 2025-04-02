@@ -11,7 +11,6 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout # type: ignore
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.callbacks import EarlyStopping # type: ignore
 from tensorflow.keras.regularizers import l2 # type: ignore
-# import talib
 import seaborn as sns
 from scipy import stats
 from sklearn.preprocessing import RobustScaler
@@ -22,15 +21,15 @@ from tensorflow.keras.regularizers import l1_l2 # type: ignore
 from tensorflow.keras.callbacks import ReduceLROnPlateau # type: ignore
 import traceback
 from sklearn.metrics import mean_squared_error
-# from tensorflow.keras.wrappers.scikit_learn import KerasRegressor # type: ignore
+from tensorflow.keras.wrappers.scikit_learn import KerasRegressor # type: ignore
 from sklearn.model_selection import GridSearchCV
-# from scikeras.wrappers import KerasRegressor
-# from sklearn.model_selection import GridSearchCV
+from scikeras.wrappers import KerasRegressor # type: ignore
+from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
 import keras_tuner as kt
-from tensorflow import keras
+from tensorflow import keras # type: ignore
 from tensorflow.keras.optimizers import Adam # type: ignore
-# from tensorflow.keras.layers import CuDNNLSTM # type: ignore
+from tensorflow.keras.layers import CuDNNLSTM # type: ignore
 
 # Define the time period for historical data
 end_date = datetime(2025, 3, 13)
@@ -350,21 +349,7 @@ def create_lstm_model(input_file, look_back=126, train_split=0.7):
         ###GPU
         return model
     
-    # project_name = f'lstm_tuning_{datetime.date.today()}
-
-    # tuner = kt.Hyperband(
-#     build_model,
-#     objective='val_loss',
-#     max_epochs=60,
-#     factor=3,
-#     directory='keras_tuner',
-#     # project_name='lstm_tuning',
-#     # max_retries_per_trial=3,  # Retry failed trials up to 3 times
-#     # max_consecutive_failed_trials=5  # Stop after 5 consecutive failures
-#     # max_trials=20,
-#     project_name=f'lstm_tuning_{ticker}',  # Unique project name per ticker
-#     overwrite=True
-# )
+    overwrite=True
 
     tuner = kt.BayesianOptimization(
         hypermodel=build_model,

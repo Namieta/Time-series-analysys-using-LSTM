@@ -1,4 +1,4 @@
-![LaTeX](https://img.shields.io/badge/LaTeX-Equations-blue?style=flat)
+
 # Time-series-analysys-using-LSTM
 This repository focuses on LSTM models and technical indicators like RSI, MACD, Bollinger Bands, and ROC. It includes data preprocessing, EDA, hyperparameter tuning, and stock price prediction to enhance investment strategies.
 
@@ -29,16 +29,6 @@ Calculated using Mean Decrease in Impurity (MDI):
 8. Visualization: Generates plots comparing actual vs predicted stock prices.
 
 
-## Dependencies
-This project uses the following libraries:
-
-pandas - For data manipulation
-numpy - For numerical computations
-matplotlib & seaborn - For visualization
-yfinance - For downloading stock data
-tensorflow & keras_tuner - For building and optimizing LSTM models
-scipy & statsmodels - For statistical analysis
-sklearn - For preprocessing and feature selection
 
 ## Visualization Code Samples
 git add images/

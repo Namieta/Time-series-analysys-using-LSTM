@@ -1,24 +1,12 @@
 # Time-series-analysys-using-LSTM
 This repository focuses on LSTM models and technical indicators like RSI, MACD, Bollinger Bands, and ROC. It includes data preprocessing, EDA, hyperparameter tuning, and stock price prediction to enhance investment strategies.
 
-Mathematical Foundations
-
-### LSTM Gates
-$$
-\begin{aligned}
-f_t &= \sigma(W_f \cdot [h_{t-1}, x_t] + b_f) \\
-i_t &= \sigma(W_i \cdot [h_{t-1}, x_t] + b_i) \\
-\tilde{C}_t &= \tanh(W_C \cdot [h_{t-1}, x_t] + b_C) \\
-C_t &= f_t \odot C_{t-1} + i_t \odot \tilde{C}_t \\
-o_t &= \sigma(W_o \cdot [h_{t-1}, x_t] + b_o) \\
-h_t &= o_t \odot \tanh(C_t)
-\end{aligned}
-$$
-
 ### Evaluation Metric
 **Mean Absolute Percentage Error (MAPE):**
 $$
 \text{MAPE} = \frac{100\%}{n} \sum_{i=1}^n \left| \frac{y_i - \hat{y}_i}{y_i} \right|
+
+Feature Selection 
 
 **Features**
 1. Data Collection: Downloads historical stock data for portfolio tickers using Yahoo Finance.
@@ -43,4 +31,6 @@ scipy & statsmodels - For statistical analysis
 sklearn - For preprocessing and feature selection
 
 ## Visualization Code Samples
-
+git add images/
+git commit -m "Add LSTM prediction graphs"
+git push origin main

@@ -1,6 +1,25 @@
 # Time-series-analysys-using-LSTM
 This repository focuses on LSTM models and technical indicators like RSI, MACD, Bollinger Bands, and ROC. It includes data preprocessing, EDA, hyperparameter tuning, and stock price prediction to enhance investment strategies.
 
+Mathematical Foundations
+
+### LSTM Gates
+$$
+\begin{aligned}
+f_t &= \sigma(W_f \cdot [h_{t-1}, x_t] + b_f) \\
+i_t &= \sigma(W_i \cdot [h_{t-1}, x_t] + b_i) \\
+\tilde{C}_t &= \tanh(W_C \cdot [h_{t-1}, x_t] + b_C) \\
+C_t &= f_t \odot C_{t-1} + i_t \odot \tilde{C}_t \\
+o_t &= \sigma(W_o \cdot [h_{t-1}, x_t] + b_o) \\
+h_t &= o_t \odot \tanh(C_t)
+\end{aligned}
+$$
+
+### Evaluation Metric
+**Mean Absolute Percentage Error (MAPE):**
+$$
+\text{MAPE} = \frac{100\%}{n} \sum_{i=1}^n \left| \frac{y_i - \hat{y}_i}{y_i} \right|
+
 **Features**
 1. Data Collection: Downloads historical stock data for portfolio tickers using Yahoo Finance.
 2. Technical Indicator Calculation: Includes RSI, MACD, Bollinger Bands, and ROC for detailed analysis.
@@ -12,14 +31,7 @@ This repository focuses on LSTM models and technical indicators like RSI, MACD, 
 8. Visualization: Generates plots comparing actual vs predicted stock prices.
 
 
-├── stock_data_LSTM_Future_1/       # Directory for storing downloaded stock data
-├── keras_tuner/                    # Directory for storing hyperparameter tuning results
-├── stock_predictions_plot_hyperparameter_1/ # Directory for saving prediction plots
-├── holdings.xlsx                   # Input file containing portfolio tickers
-├── LSTM.py                         # Main Python script
-└── README.md                       # Project documentation
-
-**Dependencies**
+## Dependencies
 This project uses the following libraries:
 
 pandas - For data manipulation
@@ -30,5 +42,5 @@ tensorflow & keras_tuner - For building and optimizing LSTM models
 scipy & statsmodels - For statistical analysis
 sklearn - For preprocessing and feature selection
 
-**Visualization**
+## Visualization Code Samples
 
